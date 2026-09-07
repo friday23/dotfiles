@@ -1,0 +1,211 @@
+" ============================================================================
+" Vim Configuration for Python & Bash Development
+" ============================================================================
+
+" Basic Settings
+" ============================================================================
+set nocompatible              " Disable vi compatibility
+filetype off                  " Required for plugin loading
+
+" Install vim-plug if not present
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" Plugin Management with vim-plug
+" ============================================================================
+call plug#begin('~/.vim/plugged')
+
+" Core Plugins
+Plug 'preservim/nerdtree'                    " File explorer
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'                      " Fuzzy file finder
+Plug 'vim-airline/vim-airline'               " Status bar
+Plug 'vim-airline/vim-airline-themes'        " Status bar themes
+Plug 'tpope/vim-fugitive'                    " Git integration
+
+" Code Completion & Syntax
+Plug 'neoclide/coc.nvim', {'branch': 'release'} " LSP support & completion
+Plug 'sheerun/vim-polyglot'                  " Syntax highlighting for many languages
+
+" Python-specific
+Plug 'davidhalter/jedi-vim'                  " Python autocompletion
+Plug 'dense-analysis/ale'                    " Asynchronous linting
+Plug 'psf/black', { 'branch': 'stable' }     " Python formatter
+Plug 'tmhedberg/SimpylFold'                  " Python code folding
+
+" Bash-specific
+Plug 'z0mbix/vim-shfmt', { 'for': 'sh' }     " Shell script formatter
+
+" General Development
+Plug 'tpope/vim-commentary'                  " Easy commenting
+Plug 'tpope/vim-surround'                    " Surround text objects
+Plug 'jiangmiao/auto-pairs'                  " Auto-close brackets
+Plug 'preservim/tagbar'                      " Tag/function viewer
+Plug 'airblade/vim-gitgutter'                " Git diff in gutter
+
+call plug#end()
+
+" General Settings
+" ============================================================================
+filetype plugin indent on     " Enable file type detection
+syntax enable                 " Enable syntax highlighting
+
+set encoding=utf-8            " Use UTF-8 encoding
+set number relativenumber     " Show line numbers (hybrid mode)
+set showcmd                   " Show command in status line
+set showmatch                 " Highlight matching brackets
+set hlsearch                  " Highlight search results
+set incsearch                 " Incremental search
+set ignorecase smartcase      " Smart case-sensitive search
+set autoindent                " Auto-indent new lines
+set expandtab                 " Use spaces instead of tabs
+set tabstop=4                 " Tab width
+set shiftwidth=4              " Indent width
+set softtabstop=4             " Soft tab width
+set wrap                      " Wrap long lines
+set linebreak                 " Break lines at word boundaries
+set scrolloff=8               " Keep 8 lines visible above/below cursor
+set sidescrolloff=8           " Keep 8 columns visible left/right
+set backspace=indent,eol,start " Intuitive backspace
+set hidden                    " Allow hidden buffers
+set wildmenu                  " Command-line completion
+set wildmode=longest:full,full
+set updatetime=300            " Faster completion
+set signcolumn=yes            " Always show sign column
+set mouse=a                   " Enable mouse support
+set clipboard=unnamedplus     " Use system clipboard
+set splitright splitbelow     " Intuitive splits
+set termguicolors             " Enable true colors
+set laststatus=2              " Always show status line
+
+" Color scheme
+colorscheme desert
+
+" Python-specific Settings
+" ============================================================================
+autocmd FileType python setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
+autocmd FileType python setlocal colorcolumn=88  " PEP 8 line length guide
+autocmd FileType python setlocal textwidth=88
+autocmd FileType python setlocal foldmethod=indent
+autocmd FileType python setlocal foldlevel=99
+
+" Bash-specific Settings
+" ============================================================================
+autocmd FileType sh setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType sh setlocal textwidth=80
+
+" Key Mappings
+" ============================================================================
+let mapleader = " "           " Set space as leader key
+
+" General
+nnoremap <leader>w :w<CR>                    " Save file
+nnoremap <leader>q :q<CR>                    " Quit
+nnoremap <leader>x :wq<CR>                   " Save and quit
+nnoremap <C-h> <C-w>h                        " Navigate splits
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" NERDTree
+nnoremap <leader>n :NERDTreeToggle<CR>
+nnoremap <leader>f :NERDTreeFind<CR>
+
+" FZF
+nnoremap <leader>p :Files<CR>
+nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>g :Rg<CR>
+
+" Tagbar
+nnoremap <leader>t :TagbarToggle<CR>
+
+" Git
+nnoremap <leader>gs :Git<CR>
+nnoremap <leader>gc :Git commit<CR>
+nnoremap <leader>gp :Git push<CR>
+
+" Clear search highlighting
+nnoremap <leader>h :nohlsearch<CR>
+
+" Python-specific mappings
+autocmd FileType python nnoremap <buffer> <leader>r :!python3 %<CR>
+autocmd FileType python nnoremap <buffer> <leader>b :Black<CR>
+
+" Bash-specific mappings
+autocmd FileType sh nnoremap <buffer> <leader>r :!bash %<CR>
+autocmd FileType sh nnoremap <buffer> <leader>c :!shellcheck %<CR>
+
+" Plugin Configuration
+" ============================================================================
+
+" NERDTree
+let NERDTreeShowHidden=1
+let NERDTreeIgnore=['\.pyc$', '__pycache__', '.git$']
+
+" Airline
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_powerline_fonts = 1
+let g:airline_theme='dark'
+
+" ALE (Linting)
+let g:ale_linters = {
+\   'python': ['flake8', 'pylint', 'mypy'],
+\   'sh': ['shellcheck'],
+\}
+let g:ale_fixers = {
+\   'python': ['black', 'isort'],
+\   'sh': ['shfmt'],
+\}
+let g:ale_fix_on_save = 0  " Set to 1 to auto-fix on save
+let g:ale_sign_error = '✗'
+let g:ale_sign_warning = '⚠'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+" Jedi-vim (Python completion)
+let g:jedi#auto_initialization = 1
+let g:jedi#completions_enabled = 0  " Let CoC handle completions
+let g:jedi#popup_on_dot = 0
+let g:jedi#show_call_signatures = 1
+
+" CoC (Completion)
+" Use tab for trigger completion
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <CR> to confirm completion
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+
+" GoTo code navigation
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Black (Python formatter)
+let g:black_linelength = 88
+
+" SimpylFold
+let g:SimpylFold_docstring_preview = 1
+
+" ============================================================================
+" Installation Instructions:
+" 1. Save this file as ~/.vimrc
+" 2. Open vim and run :PlugInstall
+" 3. Install external dependencies:
+"    - pip install python-lsp-server flake8 black isort mypy pylint
+"    - Install shellcheck (apt/brew install shellcheck)
+"    - Install shfmt (go install mvdan.cc/sh/v3/cmd/shfmt@latest)
+" 4. For CoC language servers, run in vim:
+"    :CocInstall coc-pyright coc-sh
+" ============================================================================
