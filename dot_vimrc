@@ -75,7 +75,7 @@ set wildmenu                  " Command-line completion
 set wildmode=longest:full,full
 set updatetime=300            " Faster completion
 set signcolumn=yes            " Always show sign column
-set mouse=a                   " Enable mouse support
+set mouse=                    " mouse=a Enables mouse support
 set clipboard=unnamedplus     " Use system clipboard
 set splitright splitbelow     " Intuitive splits
 set termguicolors             " Enable true colors
