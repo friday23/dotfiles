@@ -1,0 +1,19 @@
+// ~/.config/zellij/layouts/ai-command-center.kdl
+layout {
+    // Top pane for the editor
+    pane size="60%" {
+        command "nvim"
+        name "Editor"
+    }
+    // Bottom section split vertically for AI and Terminal
+    pane split_direction="Vertical" size="40%" {
+        pane size="50%" {
+            command "claude"
+            name "AI Agent"
+        }
+        pane size="50%" {
+            command "bash" // Or zsh/fish
+            name "Tests & Logs"
+        }
+    }
+}

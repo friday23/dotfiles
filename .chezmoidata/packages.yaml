@@ -1,0 +1,63 @@
+packages:
+  # apt packages, installed by .chezmoiscripts/run_onchange_before_20-apt-packages.sh.tmpl
+  # "common" is installed everywhere; the role key (desktop/server) is added on top.
+  # A role with no key here (e.g. "minimal") gets only "common".
+  apt:
+    common:
+      - git
+      - gh                # from GitHub's apt repo (see 10-apt-repos script)
+      - curl
+      - wget
+      - vim
+      - tmux
+      - htop
+      - ripgrep
+      - fd-find           # binary is called fdfind on Debian/Ubuntu
+      - jq
+      - rsync
+      - unzip
+      - build-essential   # C compiler, needed by nvim-treesitter
+      - shellcheck        # used by bash-language-server
+      - shfmt             # used by conform.nvim
+    desktop:
+      - keepassxc
+      - vlc
+      - flatpak
+      - podman
+      - distrobox
+    server:
+      - ufw
+      - fail2ban
+      - unattended-upgrades
+
+  # Optional Docker CE from Docker's apt repo. Set docker: true to enable.
+  docker: false
+  docker_pkgs:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    - docker-buildx-plugin
+    - docker-compose-plugin
+
+  # Python CLI tools, installed with `uv tool install`
+  uv_tools:
+    - ruff
+    - basedpyright
+    - httpie
+    - pre-commit
+    - yt-dlp
+
+  # Python interpreters managed by uv
+  uv_pythons:
+    - "3.12"
+    - "3.13"
+
+  # Flatpak app IDs (desktop role only), e.g. org.mozilla.firefox
+  flatpak: []
+
+  # Espanso text expander (desktop role only), installed from the official .deb.
+  # session: x11 or wayland (check with: echo $XDG_SESSION_TYPE). Needs Debian 12+
+  # or Ubuntu 23.04+ (wxWidgets 3.2) and an amd64 machine.
+  espanso:
+    enabled: true
+    session: x11

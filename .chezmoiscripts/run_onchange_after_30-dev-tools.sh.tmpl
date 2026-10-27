@@ -1,0 +1,44 @@
+#!/bin/bash
+# User-space dev tooling: uv, Claude Code, mise tools, uv tools, flatpaks.
+# Re-runs when this script, the lists in packages.yaml, or the mise config change.
+# mise config hash: {{ include "dot_config/mise/config.toml" | sha256sum }}
+set -euo pipefail
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
+
+# --- uv (update later with: uv self update) ---
+if ! command -v uv >/dev/null 2>&1; then
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
+
+# --- Claude Code (native installer, updates itself) ---
+if ! command -v claude >/dev/null 2>&1; then
+  curl -fsSL https://claude.ai/install.sh | bash
+fi
+
+# --- mise (node, neovim, zellij, bw, language servers: see dot_config/mise/config.toml) ---
+if ! command -v mise >/dev/null 2>&1; then
+  curl -fsSL https://mise.run | sh
+fi
+# node first, because the npm: tools need it
+mise install node
+mise install
+
+# --- Python versions managed by uv ---
+{{ range .packages.uv_pythons -}}
+uv python install {{ . }}
+{{ end -}}
+
+# --- Python CLI tools in isolated environments ---
+{{ range .packages.uv_tools -}}
+uv tool install {{ . }}
+{{ end -}}
+
+{{ if and (eq .role "desktop") .packages.flatpak -}}
+# --- Flatpaks ---
+if command -v flatpak >/dev/null 2>&1; then
+  flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+{{ range .packages.flatpak -}}
+  flatpak install --user -y --noninteractive flathub {{ . }}
+{{ end -}}
+fi
+{{ end -}}

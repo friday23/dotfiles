@@ -1,0 +1,18 @@
+#!/bin/bash
+# Lists manually installed apt packages and uv tools that are not recorded
+# in packages.yaml. Crude word match, but good enough to keep the repo honest.
+set -euo pipefail
+
+yaml="${CHEZMOI_SOURCE_DIR:-$HOME/.local/share/chezmoi}/.chezmoidata/packages.yaml"
+[ -f "$yaml" ] || { echo "packages.yaml not found at $yaml" >&2; exit 1; }
+
+words() { grep -oE '[A-Za-z0-9][A-Za-z0-9.+_-]*' "$yaml" | sort -u; }
+
+echo "== apt: manually installed, not in packages.yaml =="
+comm -13 <(words) <(apt-mark showmanual | sort -u)
+
+if command -v uv >/dev/null 2>&1; then
+  echo
+  echo "== uv tools: installed, not in packages.yaml =="
+  comm -13 <(words) <(uv tool list 2>/dev/null | awk '/^[A-Za-z0-9]/ {print $1}' | sort -u)
+fi

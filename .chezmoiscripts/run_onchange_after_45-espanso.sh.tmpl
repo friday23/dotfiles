@@ -1,0 +1,33 @@
+{{ if and (eq .role "desktop") .packages.espanso.enabled -}}
+#!/bin/bash
+# Installs espanso from the official .deb ({{ .packages.espanso.session }} build).
+# Skips if espanso is already installed. To upgrade later, download the new .deb
+# and run: sudo apt install ./espanso-debian-{{ .packages.espanso.session }}-amd64.deb
+set -euo pipefail
+
+if command -v espanso >/dev/null 2>&1; then
+  exit 0
+fi
+
+if [ "$(dpkg --print-architecture)" != "amd64" ]; then
+  echo "espanso: no official .deb for $(dpkg --print-architecture); install it manually" >&2
+  exit 0
+fi
+
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+chmod 755 "$tmp"   # lets apt's _apt user read the file without a sandbox warning
+
+curl -fsSL "https://github.com/espanso/espanso/releases/latest/download/espanso-debian-{{ .packages.espanso.session }}-amd64.deb" \
+  -o "$tmp/espanso.deb"
+chmod 644 "$tmp/espanso.deb"
+sudo apt-get install -y "$tmp/espanso.deb"
+
+# Register the systemd user service; starting needs a running desktop session
+espanso service register || echo "espanso: 'espanso service register' failed; run it from a desktop session" >&2
+if [ -n "${DISPLAY:-}" ]; then
+  espanso start || echo "espanso: start failed; check 'espanso log'" >&2
+else
+  echo "espanso: installed. Run 'espanso start' from your desktop session." >&2
+fi
+{{ end -}}

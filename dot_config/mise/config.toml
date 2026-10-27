@@ -1,0 +1,12 @@
+[tools]
+node = "lts"
+neovim = "stable"                    # Neovim 0.11+ is required by the config
+zellij = "latest"
+"npm:@bitwarden/cli" = "latest"      # bw, for Vaultwarden (vw.cape21.org)
+"npm:bash-language-server" = "latest"
+"npm:yaml-language-server" = "latest"
+tree-sitter = "latest"               # official release binary; required by nvim-treesitter (main)
+                                     # (the npm:tree-sitter-cli package left no binary behind)
+fzf = "latest"                       # fuzzy finder; `fzf --bash` integration needs 0.48+
+lazygit = "latest"                   # git TUI
+starship = "latest"                  # prompt, configured in dot_config/starship.toml

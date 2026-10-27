@@ -1,0 +1,13 @@
+{{ if eq .role "desktop" -}}
+#!/bin/bash
+# Ghostty has no official apt package for Ubuntu/Debian.
+# Options: build from source (Zig), or use a community .deb project.
+# Put your chosen install commands below this check.
+set -euo pipefail
+
+if command -v ghostty >/dev/null 2>&1; then
+  exit 0
+fi
+
+echo "ghostty is not installed. Edit .chezmoiscripts/run_onchange_after_40-ghostty.sh.tmpl to install it." >&2
+{{ end -}}

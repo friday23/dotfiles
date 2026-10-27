@@ -1,0 +1,26 @@
+#!/bin/bash
+# Third-party apt repositories, using the keyring method (no apt-key).
+# The package install script (20) runs apt-get update afterwards.
+set -euo pipefail
+
+sudo install -d -m 0755 /etc/apt/keyrings
+
+# --- GitHub CLI ---
+if [ ! -f /etc/apt/keyrings/githubcli-archive-keyring.gpg ]; then
+  curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+    | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null
+  sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+fi
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+  | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
+
+{{ if .packages.docker -}}
+# --- Docker CE ---
+if [ ! -f /etc/apt/keyrings/docker.asc ]; then
+  sudo curl -fsSL https://download.docker.com/linux/{{ .chezmoi.osRelease.id }}/gpg \
+    -o /etc/apt/keyrings/docker.asc
+  sudo chmod a+r /etc/apt/keyrings/docker.asc
+fi
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/{{ .chezmoi.osRelease.id }} {{ .chezmoi.osRelease.versionCodename }} stable" \
+  | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
+{{ end -}}

@@ -1,0 +1,65 @@
+# ~/.bashrc (managed by chezmoi)
+# Minimal starter. If you already have a .bashrc, run `chezmoi add ~/.bashrc`
+# instead and append the PATH / mise / uv section at the bottom.
+
+# Only for interactive shells
+case $- in
+  *i*) ;;
+  *) return ;;
+esac
+
+# History
+HISTCONTROL=ignoreboth
+HISTSIZE=10000
+HISTFILESIZE=20000
+shopt -s histappend checkwinsize
+
+# Completion
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+# Aliases
+alias ls='ls --color=auto'
+alias ll='ls -alF'
+alias grep='grep --color=auto'
+alias fd='fdfind'
+alias v='nvim'
+
+export EDITOR=nvim
+export VISUAL=nvim
+
+# Prompt
+PS1='\[\e[32m\]\u@\h\[\e[0m\]:\[\e[34m\]\w\[\e[0m\]\$ '
+
+# --- PATH, mise, uv ---
+export PATH="$HOME/.local/bin:$PATH"
+
+if [ -x "$HOME/.local/bin/mise" ]; then
+  eval "$("$HOME/.local/bin/mise" activate bash)"
+fi
+
+if command -v uv >/dev/null 2>&1; then
+  eval "$(uv generate-shell-completion bash)"
+fi
+
+# --- fzf: Ctrl-R history, Ctrl-T files, Alt-C directories (needs fzf 0.48+) ---
+# fd is installed from apt as "fdfind", and aliases are not seen by fzf, so use the real name
+if command -v fzf >/dev/null 2>&1; then
+  export FZF_DEFAULT_COMMAND='fdfind --type f --hidden --follow --exclude .git'
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_ALT_C_COMMAND='fdfind --type d --hidden --follow --exclude .git'
+  export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+  eval "$(fzf --bash)"
+fi
+
+alias lg='lazygit'
+
+# --- starship prompt (keep this last; config in ~/.config/starship.toml) ---
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init bash)"
+fi

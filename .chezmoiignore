@@ -1,0 +1,12 @@
+README.md
+system/
+
+{{ if ne .role "desktop" }}
+.config/ghostty
+.config/zellij
+.config/espanso
+{{ end }}
+
+{{ if not (and (lookPath "bw") (env "BW_SESSION")) }}
+.ssh/id_ed25519
+{{ end }}

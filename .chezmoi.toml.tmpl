@@ -1,0 +1,7 @@
+{{- $role := promptStringOnce . "role" "Machine role (desktop/server/minimal)" -}}
+{{- $name := promptStringOnce . "name" "Git name" -}}
+{{- $email := promptStringOnce . "email" "Git email" -}}
+[data]
+  role = {{ $role | quote }}
+  name = {{ $name | quote }}
+  email = {{ $email | quote }}

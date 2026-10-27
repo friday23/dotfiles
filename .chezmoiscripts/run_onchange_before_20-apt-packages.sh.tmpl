@@ -1,0 +1,21 @@
+#!/bin/bash
+# Installs apt packages listed in .chezmoidata/packages.yaml.
+# The package names are rendered into this script, so changing the list
+# changes the script and chezmoi re-runs it.
+# Remove --no-install-recommends if you prefer apt's default behaviour.
+set -euo pipefail
+
+{{- $pkgs := .packages.apt.common }}
+{{- if hasKey .packages.apt .role }}
+{{-   $pkgs = concat $pkgs (index .packages.apt .role) }}
+{{- end }}
+{{- if .packages.docker }}
+{{-   $pkgs = concat $pkgs .packages.docker_pkgs }}
+{{- end }}
+
+sudo apt-get update
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+{{- range $pkgs }}
+  {{ . }} \
+{{- end }}
+  ca-certificates

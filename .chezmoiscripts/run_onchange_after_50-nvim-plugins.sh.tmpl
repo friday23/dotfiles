@@ -1,0 +1,28 @@
+#!/bin/bash
+# Restores Neovim plugins to the versions in lazy-lock.json and installs
+# treesitter parsers listed in lua/langs.lua.
+# Re-runs when the lockfile or the language list changes.
+{{- $lock := joinPath .chezmoi.sourceDir "dot_config/nvim/lazy-lock.json" }}
+{{ if stat $lock -}}
+# lazy-lock hash: {{ include "dot_config/nvim/lazy-lock.json" | sha256sum }}
+{{ end -}}
+# langs hash: {{ include "dot_config/nvim/lua/langs.lua" | sha256sum }}
+set -euo pipefail
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
+
+# Exit non-zero (not 0) on missing tools so chezmoi retries on the next apply
+if ! command -v nvim >/dev/null 2>&1; then
+  echo "nvim not found on PATH; run 'mise install' and re-apply" >&2
+  exit 1
+fi
+if ! tree-sitter --version >/dev/null 2>&1; then
+  echo "tree-sitter CLI is missing or broken; run 'mise install tree-sitter' and re-apply" >&2
+  exit 1
+fi
+
+{{ if stat $lock -}}
+nvim --headless "+Lazy! restore" +qa
+{{ else -}}
+nvim --headless "+Lazy! install" +qa
+{{ end -}}
+nvim --headless -c "lua require('nvim-treesitter').install(require('langs')):wait(300000)" -c qa

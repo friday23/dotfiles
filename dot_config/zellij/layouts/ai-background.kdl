@@ -1,0 +1,23 @@
+// ~/.config/zellij/layouts/ai-background.kdl
+//  "Background Worker" (Tabbed)
+// Sometimes Claude Code is tasked with a massive, long-running refactor. 
+// Instead of letting it clutter your main view, put it in its own tab. You can check in on it periodically.
+
+layout {
+    tab name="Main Workspace" {
+        pane {
+            command "nvim"
+            name "Editor"
+        }
+        pane split_direction="Vertical" size="30%" {
+            command "bash"
+            name "Terminal"
+        }
+    }
+    tab name="AI Refactor" {
+        pane {
+            command "claude"
+            name "Claude Code"
+        }
+    }
+}

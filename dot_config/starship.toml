@@ -1,0 +1,31 @@
+# Short prompt: directory, git, python/uv, command duration.
+# No Nerd Font symbols, so it renders in any terminal font.
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = false
+command_timeout = 500
+format = "$directory$git_branch$git_status$python$cmd_duration$line_break$character"
+
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+
+[git_branch]
+symbol = ""
+format = "[$symbol$branch]($style) "
+
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+
+[python]
+symbol = "py "
+format = '[(${symbol}${version} )(\($virtualenv\) )]($style)'
+detect_files = [".python-version", "pyproject.toml", "uv.lock", "requirements.txt"]
+
+[cmd_duration]
+min_time = 2000
+format = "[$duration]($style) "
+
+[character]
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
