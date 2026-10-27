@@ -5,20 +5,20 @@ packages:
   apt:
     common:
       - git
-      - gh                # from GitHub's apt repo (see 10-apt-repos script)
+      - gh # from GitHub's apt repo (see 10-apt-repos script)
       - curl
       - wget
       - vim
       - tmux
       - htop
       - ripgrep
-      - fd-find           # binary is called fdfind on Debian/Ubuntu
+      - fd-find # binary is called fdfind on Debian/Ubuntu
       - jq
       - rsync
       - unzip
-      - build-essential   # C compiler, needed by nvim-treesitter
-      - shellcheck        # used by bash-language-server
-      - shfmt             # used by conform.nvim
+      - build-essential # C compiler, needed by nvim-treesitter
+      - shellcheck # used by bash-language-server
+      - shfmt # used by conform.nvim
     desktop:
       - keepassxc
       - vlc
@@ -61,3 +61,7 @@ packages:
   espanso:
     enabled: true
     session: x11
+
+  # Cloudflare Tunnel client (cloudflared), from Cloudflare's official apt repo.
+  # Installed only on machines whose role is listed here ([] disables it).
+  cloudflared_roles: [desktop, server]

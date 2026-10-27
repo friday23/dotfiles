@@ -24,3 +24,15 @@ fi
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/{{ .chezmoi.osRelease.id }} {{ .chezmoi.osRelease.versionCodename }} stable" \
   | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
 {{ end -}}
+
+{{ if has .role .packages.cloudflared_roles -}}
+# --- Cloudflare (cloudflared) ---
+sudo install -d -m 0755 /usr/share/keyrings
+if [ ! -f /usr/share/keyrings/cloudflare-main.gpg ]; then
+  curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg \
+    | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
+fi
+echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main" \
+  | sudo tee /etc/apt/sources.list.d/cloudflared.list >/dev/null
+{{ end -}}
+

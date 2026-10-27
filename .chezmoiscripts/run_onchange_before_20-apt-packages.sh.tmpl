@@ -12,10 +12,14 @@ set -euo pipefail
 {{- if .packages.docker }}
 {{-   $pkgs = concat $pkgs .packages.docker_pkgs }}
 {{- end }}
-
+{{- if has .role .packages.cloudflared_roles }}
+{{-   $pkgs = concat $pkgs (list "cloudflared") }}
+{{- end }}
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
 {{- range $pkgs }}
   {{ . }} \
 {{- end }}
   ca-certificates
+
+
