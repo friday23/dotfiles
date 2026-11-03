@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# bw_ssh.sh dependency hash: {{ include "dot_config/bash/plugins/manifest.txt" | default "v1" | sha256sum }}
+set -euo pipefail
+
+echo "Checking SSH agent and fetching keys from Bitwarden..."
+
+# 1. Ensure an SSH agent is running in the current session
+if [ -z "${SSH_AUTH_SOCK:-}" ]; then
+    echo "Starting background ssh-agent..."
+    eval "$(ssh-agent -s)"
+fi
+
+# 2. Check if Bitwarden CLI is logged in / unlocked
+if ! bw status | grep -q '"status":"unlocked"'; then
+    echo "Bitwarden vault is locked. Please unlock your vault:"
+    export BW_SESSION="$(bw unlock --raw)"
+fi
+
+# 3. Execute your custom script logic or call your script
+# (Assuming bw_ssh.sh lives in your dotfiles or is copied to ~/.local/bin)
+if [ -x "$HOME/.local/bin/bw_ssh.sh" ]; then
+
+    "$HOME/.local/bin/bw_ssh.sh github"
+
+else
+    echo "Error: bw_ssh.sh not found or not executable in ~/.local/bin/"
+    exit 1
+fi
+
+echo "SSH keys successfully fetched and registered."

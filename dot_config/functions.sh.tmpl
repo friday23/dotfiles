@@ -1,7 +1,19 @@
-
 # Quick directory creation and navigation
 mkcd() {
-    [ -z "$1" ] && { echo "Usage: mkcd <dir>"; return 1; }
-    mkdir -p "$1" && cd "$1" || return 1
+  [ -z "$1" ] && {
+    echo "Usage: mkcd <dir>"
+    return 1
+  }
+  mkdir -p "$1" && cd "$1" || return 1
 }
 
+# Function to copy text to your local clipboard via SSH using OSC 52
+copy() {
+  local text="${1:-$(cat)}"
+  # Encode the text in base64
+  local encoded
+  encoded=$(printf "%s" "$text" | base64 | tr -d '\n')
+
+  # Send the OSC 52 escape sequence to the terminal
+  printf "\033]52;c;%s\033\\" "$encoded"
+}

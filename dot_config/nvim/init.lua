@@ -1,3 +1,9 @@
+vim.filetype.add({
+  pattern = {
+    [".*%.sh%.tmpl$"] = "sh",
+  }
+})
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.uv.fs_stat(lazypath) then
   vim.fn.system({
@@ -15,3 +21,4 @@ vim.diagnostic.config({ virtual_text = true, severity_sort = true })
 
 -- Loads every file in lua/plugins/
 require("lazy").setup("plugins")
+

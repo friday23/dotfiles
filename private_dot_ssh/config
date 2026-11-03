@@ -1,0 +1,7 @@
+
+# Added by bw_ssh on 2026-10-29
+Host github_test
+User git
+HostName github.com
+IdentityFile ~/.ssh/github.pub
+IdentitiesOnly yes
