@@ -1,0 +1,7 @@
+
+# Quick directory creation and navigation
+mkcd() {
+    [ -z "$1" ] && { echo "Usage: mkcd <dir>"; return 1; }
+    mkdir -p "$1" && cd "$1" || return 1
+}
+
