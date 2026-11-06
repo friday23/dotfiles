@@ -1,8 +1,10 @@
-vim.filetype.add({
-  pattern = {
-    [".*%.sh%.tmpl$"] = "sh",
-  }
-})
+-- vim.filetype.add({
+--  pattern = {
+--    [".*%.sh%.tmpl$"] = "sh",
+--  }
+--})
+
+require("filetypes")
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.uv.fs_stat(lazypath) then

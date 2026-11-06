@@ -1,0 +1,23 @@
+{{ if index . "skills_manager" -}}
+#!/bin/bash
+# Installs skills-manager-cli (third-party) from the project's GitHub releases.
+# Enabled by the "skills_manager" answer given during `chezmoi init`.
+set -euo pipefail
+
+dest="$HOME/.local/bin/skills-manager-cli"
+[ -x "$dest" ] && exit 0
+
+if [ "$(uname -m)" != "x86_64" ]; then
+  echo "skills-manager-cli: only an x64 Linux build is published; skipping" >&2
+  exit 0
+fi
+
+mkdir -p "$HOME/.local/bin"
+tmp="$(mktemp)"
+trap 'rm -f "$tmp"' EXIT
+
+# -f makes curl fail on HTTP errors instead of saving the error page as the binary
+curl -fSL -o "$tmp" \
+  "https://github.com/xingkongliang/skills-manager/releases/latest/download/skills-manager-cli-Linux-x64"
+install -m 0755 "$tmp" "$dest"
+{{ end -}}
