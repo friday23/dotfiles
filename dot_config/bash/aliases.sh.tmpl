@@ -6,8 +6,13 @@ alias rm='rm -i'
 alias cp='cp -i'
 
 alias ls='ls --color=auto'
+alias ls='ls --color=auto'
+alias ll='ls -alF'
+alias grep='grep --color=auto'
+alias fd='fdfind'
+alias v='nvim'
 
 # Modern Tool Replacements (Fallback gracefully if not installed)
-if command -v eza &> /dev/null; then
-    alias ls='eza --icons'
+if command -v eza &>/dev/null; then
+  alias ls='eza --icons'
 fi
